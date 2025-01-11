@@ -1,1 +1,40 @@
 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report an Issue</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Report a Road Issue</h1>
+    <form action="/report" method="POST" enctype="multipart/form-data">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required /><br /><br />
+
+      <label for="mobile">Mobile:</label>
+      <input type="tel" id="mobile" name="mobile" required /><br /><br />
+
+      <label for="aadhar">Aadhar Number:</label>
+      <input type="text" id="aadhar" name="aadhar" required /><br /><br />
+
+      <label for="issue">Issue Details:</label>
+      <textarea id="issue" name="issue" required></textarea><br /><br />
+
+      <label for="area">Area:</label>
+      <input type="text" id="area" name="area" required /><br /><br />
+
+      <label for="images">Upload Images:</label>
+      <input
+        type="file"
+        id="images"
+        name="images"
+        accept="image/*"
+        multiple
+      /><br /><br />
+
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>
