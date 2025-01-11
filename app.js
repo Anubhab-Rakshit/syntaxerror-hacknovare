@@ -49,6 +49,7 @@ app.post("/report", upload.array("images", 5), async (req, res) => {
 });
 
 // View all reported issues with images (Base64 data)
+// View all reported issues with images (Styled with TailwindCSS)
 app.get("/view-reports", async (req, res) => {
   try {
     const reports = await collection.find();
@@ -61,29 +62,42 @@ app.get("/view-reports", async (req, res) => {
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>View Reports</title>
-          <link rel="stylesheet" href="styles.css" />
+          <script src="https://cdn.tailwindcss.com"></script>
         </head>
-        <body>
-          <h1>Reported Issues</h1>
-          ${reports
-            .map((report) => {
-              return `
-              <div>
-                <p><strong>Name:</strong> ${report.name}</p>
-                <p><strong>Mobile:</strong> ${report.mobile}</p>
-                <p><strong>Aadhar:</strong> ${report.aadhar}</p>
-                <p><strong>Issue:</strong> ${report.issue}</p>
-                <p><strong>Area:</strong> ${report.area}</p>
-                ${report.images
-                  .map((image) => {
-                    return `<img src="data:${image.contentType};base64,${image.data}" alt="${image.filename}" style="max-width: 300px; margin-bottom: 20px;" />`;
-                  })
-                  .join("")}
-                <hr />
-              </div>
-              `;
-            })
-            .join("")}
+        <body class="bg-gray-900 text-gray-100 min-h-screen">
+          <header class="bg-gray-800 p-6 shadow-md">
+            <h1 class="text-3xl font-bold text-center">Reported Issues</h1>
+          </header>
+          <main class="p-6 space-y-6 max-w-6xl mx-auto">
+            ${reports
+              .map((report) => {
+                return `
+                <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                  <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4">${report.issue}</h2>
+                    <p><strong>Name:</strong> ${report.name}</p>
+                    <p><strong>Mobile:</strong> ${report.mobile}</p>
+                    <p><strong>Aadhar:</strong> ${report.aadhar}</p>
+                    <p><strong>Area:</strong> ${report.area}</p>
+                  </div>
+                  ${
+                    report.images.length > 0
+                      ? `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+                          ${report.images
+                            .map((image) => {
+                              return `
+                              <img src="data:${image.contentType};base64,${image.data}" alt="${image.filename}" class="rounded-lg shadow-md w-full object-cover h-48" />
+                              `;
+                            })
+                            .join("")}
+                        </div>`
+                      : ""
+                  }
+                </div>
+                `;
+              })
+              .join("")}
+          </main>
         </body>
       </html>
     `;
@@ -93,6 +107,7 @@ app.get("/view-reports", async (req, res) => {
     res.status(500).send("Error fetching reports.");
   }
 });
+
 
 // Start the server
 app.listen(port, () => {
