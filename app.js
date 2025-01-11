@@ -54,7 +54,7 @@ app.get("/view-reports", async (req, res) => {
   try {
     const reports = await collection.find();
 
-    // Render the reports with centered images and animations
+    // Render the reports with centered images and modal functionality
     let html = `
       <!DOCTYPE html>
       <html lang="en">
@@ -87,7 +87,8 @@ app.get("/view-reports", async (req, res) => {
                             <img 
                               src="data:${image.contentType};base64,${image.data}" 
                               alt="${image.filename}" 
-                              class="w-full max-h-40 object-cover transition-transform duration-300 transform hover:scale-110"
+                              class="w-full max-h-40 object-cover transition-transform duration-300 transform hover:scale-110 cursor-pointer"
+                              onclick="showModal('${image.contentType}', '${image.data}', '${image.filename}')"
                             />
                           </div>
                           `;
@@ -100,6 +101,39 @@ app.get("/view-reports", async (req, res) => {
                 .join("")}
             </div>
           </div>
+
+          <!-- Modal -->
+          <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+            <div class="relative bg-gray-800 rounded-lg shadow-lg p-4 max-w-3xl w-full">
+              <button 
+                onclick="closeModal()" 
+                class="absolute top-2 right-2 text-gray-400 hover:text-white focus:outline-none"
+              >
+                ✕
+              </button>
+              <img id="modalImage" src="" alt="" class="w-full rounded-lg" />
+              <p id="modalImageName" class="text-gray-400 mt-4 text-center"></p>
+            </div>
+          </div>
+
+          <script>
+            // Show modal with the clicked image
+            function showModal(contentType, data, filename) {
+              const modal = document.getElementById("imageModal");
+              const modalImage = document.getElementById("modalImage");
+              const modalImageName = document.getElementById("modalImageName");
+
+              modalImage.src = \`data:\${contentType};base64,\${data}\`;
+              modalImageName.textContent = filename;
+              modal.classList.remove("hidden");
+            }
+
+            // Close the modal
+            function closeModal() {
+              const modal = document.getElementById("imageModal");
+              modal.classList.add("hidden");
+            }
+          </script>
         </body>
       </html>
     `;
@@ -110,8 +144,174 @@ app.get("/view-reports", async (req, res) => {
   }
 });
 
+app.get("/graphical-analysis", async (req, res) => {
+  try {
+    const reports = await collection.find();
 
+    // Initialize arrays for monthly reports, solved, and pending issues
+    const monthlyReports = new Array(12).fill(0); // Zero for each month
+    const solvedIssues = new Array(12).fill(0);
+    const pendingIssues = new Array(12).fill(0);
 
+    // Populate monthly data based on reports
+    reports.forEach((report) => {
+      const month = new Date(report._id.getTimestamp()).getMonth(); // Get month index (0 = January, 11 = December)
+      monthlyReports[month]++;
+
+      // Assuming all reports are "pending" initially
+      pendingIssues[month]++;
+
+      // Example of how to differentiate solved and pending issues
+      if (report.issue.toLowerCase().includes("resolved")) {
+        solvedIssues[month]++;
+        pendingIssues[month]--;
+      }
+    });
+
+    // HTML for the graphical analysis page
+    let html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Graphical Analysis</title>
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #2c3e50;
+              color: #ecf0f1;
+              margin: 0;
+              padding: 20px;
+            }
+            h1 {
+              text-align: center;
+            }
+            .chart-container {
+              display: flex;
+              justify-content: center;
+              gap: 50px;
+              margin-top: 40px;
+            }
+            .chart {
+              width: 400px;
+              height: 300px;
+            }
+            .btn {
+              display: block;
+              margin: 20px auto;
+              background-color: #007bff;
+              color: #fff;
+              padding: 10px 20px;
+              text-align: center;
+              border-radius: 4px;
+              text-decoration: none;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Graphical Analysis</h1>
+          <div class="chart-container">
+            <div class="chart">
+              <canvas id="reportsChart"></canvas>
+            </div>
+            <div class="chart">
+              <canvas id="issuesChart"></canvas>
+            </div>
+          </div>
+          
+          <a href="/view-reports" class="btn">Back to Reported Issues</a>
+
+          <script>
+            // Data for Monthly Reports Filed
+            const labels = ['December', 'January', 'February', 'March', 'April', 'May', 'June','July','August','September','October','November'];
+            const reportsData = {
+              labels: labels,
+              datasets: [{
+                label: 'Reports Filed',
+                data: ${JSON.stringify(monthlyReports)},
+                backgroundColor: [
+                  'rgba(54, 162, 235, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(255, 206, 86, 0.7)',
+                  'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)', 'rgba(201, 203, 207, 0.7)',
+                  'rgba(99, 255, 132, 0.7)'
+                ],
+                borderColor: [
+                  'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)',
+                  'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)', 'rgba(201, 203, 207, 1)',
+                  'rgba(99, 255, 132, 1)'
+                ],
+                borderWidth: 1
+              }]
+            };
+
+            const reportsConfig = {
+              type: 'bar',
+              data: reportsData,
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: { position: 'top', labels: { color: '#ffffff' } },
+                  title: { display: true, text: 'Monthly Reports Filed', color: '#ffffff' }
+                },
+                scales: {
+                  x: { ticks: { color: '#ffffff' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                  y: { beginAtZero: true, max: 10, ticks: { color: '#ffffff' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+                }
+              }
+            };
+
+            const reportsChart = new Chart(document.getElementById('reportsChart'), reportsConfig);
+
+            // Data for Solved vs Pending Issues
+            const issuesData = {
+              labels: labels,
+              datasets: [
+                {
+                  label: 'Issues Solved',
+                  data: ${JSON.stringify(solvedIssues)},
+                  backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1
+                },
+                {
+                  label: 'Issues Pending',
+                  data: ${JSON.stringify(pendingIssues)},
+                  backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  borderWidth: 1
+                }
+              ]
+            };
+
+            const issuesConfig = {
+              type: 'bar',
+              data: issuesData,
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: { position: 'top', labels: { color: '#ffffff' } },
+                  title: { display: true, text: 'Monthly Issue Resolution (Solved vs Pending)', color: '#ffffff' }
+                },
+                scales: {
+                  x: { ticks: { color: '#ffffff' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                  y: { beginAtZero: true, max: 10, ticks: { color: '#ffffff' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+                }
+              }
+            };
+
+            const issuesChart = new Chart(document.getElementById('issuesChart'), issuesConfig);
+          </script>
+        </body>
+      </html>
+    `;
+
+    // Send the rendered HTML as a response
+    res.send(html);
+  } catch (error) {
+    res.status(500).send("Error generating graphical analysis.");
+  }
+});
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
