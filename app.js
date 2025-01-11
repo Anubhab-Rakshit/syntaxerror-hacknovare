@@ -144,6 +144,7 @@ app.get("/view-reports", async (req, res) => {
   }
 });
 
+
 app.get("/graphical-analysis", async (req, res) => {
   try {
     const reports = await collection.find();
@@ -177,55 +178,32 @@ app.get("/graphical-analysis", async (req, res) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>Graphical Analysis</title>
           <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              background-color: #2c3e50;
-              color: #ecf0f1;
-              margin: 0;
-              padding: 20px;
-            }
-            h1 {
-              text-align: center;
-            }
-            .chart-container {
-              display: flex;
-              justify-content: center;
-              gap: 50px;
-              margin-top: 40px;
-            }
-            .chart {
-              width: 400px;
-              height: 300px;
-            }
-            .btn {
-              display: block;
-              margin: 20px auto;
-              background-color: #007bff;
-              color: #fff;
-              padding: 10px 20px;
-              text-align: center;
-              border-radius: 4px;
-              text-decoration: none;
-            }
-          </style>
+          <script src="https://cdn.tailwindcss.com"></script>
         </head>
-        <body>
-          <h1>Graphical Analysis</h1>
-          <div class="chart-container">
-            <div class="chart">
-              <canvas id="reportsChart"></canvas>
+        <body class="bg-gray-900 text-gray-100">
+          <div class="container mx-auto px-4 py-10">
+            <h1 class="text-4xl font-extrabold text-center mb-8 text-gray-100 hover:text-gray-300">Graphical Analysis</h1>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- Reports Chart -->
+              <div class="p-6 bg-gray-800 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-2xl">
+                <canvas id="reportsChart" class="w-full h-80"></canvas>
+              </div>
+
+              <!-- Issues Chart -->
+              <div class="p-6 bg-gray-800 rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-2xl">
+                <canvas id="issuesChart" class="w-full h-80"></canvas>
+              </div>
             </div>
-            <div class="chart">
-              <canvas id="issuesChart"></canvas>
-            </div>
+
+            <a href="/view-reports" class="block mt-8 mx-auto text-center text-lg font-semibold bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-all">
+              Back to Reported Issues
+            </a>
           </div>
-          
-          <a href="/view-reports" class="btn">Back to Reported Issues</a>
 
           <script>
             // Data for Monthly Reports Filed
-            const labels = ['December', 'January', 'February', 'March', 'April', 'May', 'June','July','August','September','October','November'];
+            const labels = ['December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November'];
             const reportsData = {
               labels: labels,
               datasets: [{
@@ -234,12 +212,14 @@ app.get("/graphical-analysis", async (req, res) => {
                 backgroundColor: [
                   'rgba(54, 162, 235, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(255, 206, 86, 0.7)',
                   'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)', 'rgba(201, 203, 207, 0.7)',
-                  'rgba(99, 255, 132, 0.7)'
+                  'rgba(99, 255, 132, 0.7)', 'rgba(255, 99, 132, 0.7)', 'rgba(255, 159, 64, 0.7)',
+                  'rgba(54, 162, 235, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)'
                 ],
                 borderColor: [
                   'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)',
                   'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)', 'rgba(201, 203, 207, 1)',
-                  'rgba(99, 255, 132, 1)'
+                  'rgba(99, 255, 132, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 159, 64, 1)',
+                  'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'
                 ],
                 borderWidth: 1
               }]
@@ -312,6 +292,7 @@ app.get("/graphical-analysis", async (req, res) => {
     res.status(500).send("Error generating graphical analysis.");
   }
 });
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
