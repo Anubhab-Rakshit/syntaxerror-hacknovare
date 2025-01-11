@@ -7,19 +7,24 @@ const app = express();
 const port = 3000;
 
 // Static files path
-const staticPath = path.join(__dirname, "public");
+
+
+// Serve static files from `auth-system` directory for login/signup
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(staticPath));
+app.use("/public", express.static(path.join(__dirname, "public")));
+
+
+app.use("/auth-system", express.static(path.join(__dirname, "auth-system")));
 
 // Configure Multer for file uploads (store in memory)
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Serve index.html
 app.get("/", (req, res) => {
-  res.sendFile(path.join(staticPath, "index.html"));
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Handle issue report submissions
@@ -35,16 +40,16 @@ app.post("/report", upload.array("images", 5), async (req, res) => {
     });
 
     if (!name || !mobile || !aadhar || !issue || !area) {
-      return res.status(400).sendFile(path.join(staticPath, "error.html"));
+      return res.status(400).sendFile(path.join(path.join(__dirname, "public") , "error.html"));
     }
 
     const data = { name, mobile, aadhar, issue, area, images };
     await collection.insertMany([data]);
 
-    res.status(200).sendFile(path.join(staticPath, "success.html"));
+    res.status(200).sendFile(path.join(path.join(__dirname, "public"), "success.html"));
   } catch (error) {
     console.error("Error saving report:", error);
-    res.status(500).sendFile(path.join(staticPath, "error.html"));
+    res.status(500).sendFile(path.join(path.join(__dirname, "public"), "error.html"));
   }
 });
 
