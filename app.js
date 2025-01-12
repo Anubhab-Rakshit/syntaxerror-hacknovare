@@ -349,7 +349,7 @@ app.post("/authorities-modify/add", async (req, res) => {
 });
 
 // Update honour score (protected)
-app.post("/authorities-modify/update", ensureLoggedIn, async (req, res) => {
+app.post("/authorities-modify/update", async (req, res) => {
   const { id, honourScore } = req.body;
 
   try {
