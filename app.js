@@ -459,9 +459,44 @@ app.get("/view-authorities", async (req, res) => {
                 .join("")}
             </div>
             <div class="text-center mt-8">
-              <a href="https://civilizedchaos.netlify.app" class="text-blue-500 underline hover:text-blue-300">Back to Home</a>
+              <a href="https://civilizedchaos.netlify.app/" class="btn">Back to Home</a>
             </div>
           </div>
+          <style>
+          .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+  /* Responsive styles */
+        @media (max-width: 768px) {
+          .btn {
+            width: 100%;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+        }
+      }
+      </style>
         </body>
       </html>
     `;
