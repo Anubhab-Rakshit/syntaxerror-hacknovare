@@ -373,7 +373,6 @@ app.post("/authorities-modify/update", async (req, res) => {
 
 // Logout for government
 app.get("/authorities-modify/logout", (req, res) => {
-  req.session.destroy();
   res.redirect("/authorities-modify/login");
 });
 
