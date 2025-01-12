@@ -377,7 +377,60 @@ app.get("/authorities-modify/logout", (req, res) => {
   res.redirect("/authorities-modify/login");
 });
 
+app.get("/view-authorities", async (req, res) => {
+  try {
+    const authorities = await Authority.find();
 
+    // Render the authorities in a styled HTML page
+    let html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>List of Authorities</title>
+          <script src="https://cdn.tailwindcss.com"></script>
+        </head>
+        <body class="bg-gray-900 text-gray-100">
+          <div class="container mx-auto py-10 px-6">
+            <h1 class="text-4xl font-bold text-center mb-8">List of Authorities</h1>
+            <table class="table-auto w-full bg-gray-800 rounded-lg shadow-lg">
+              <thead>
+                <tr class="bg-gray-700 text-gray-300">
+                  <th class="px-4 py-2 text-left">#</th>
+                  <th class="px-4 py-2 text-left">Name</th>
+                  <th class="px-4 py-2 text-left">Email</th>
+                  <th class="px-4 py-2 text-left">Honour Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${authorities
+                  .map((authority, index) => {
+                    return `
+                      <tr class="hover:bg-gray-600 transition-all">
+                        <td class="border px-4 py-2">${index + 1}</td>
+                        <td class="border px-4 py-2">${authority.name}</td>
+                        <td class="border px-4 py-2">${authority.email}</td>
+                        <td class="border px-4 py-2">${authority.honourScore}</td>
+                      </tr>
+                    `;
+                  })
+                  .join("")}
+              </tbody>
+            </table>
+            <div class="text-center mt-6">
+              <a href="/" class="text-blue-500 underline hover:text-blue-300">Back to Home</a>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+    res.send(html);
+  } catch (error) {
+    console.error("Error fetching authorities:", error);
+    res.status(500).send("Error fetching authorities.");
+  }
+});
 
 
 // Start the server
