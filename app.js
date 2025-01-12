@@ -352,24 +352,72 @@ app.post("/authorities-modify/add", async (req, res) => {
 
 // Update honour score (protected)
 app.post("/authorities-modify/update", async (req, res) => {
-  const { id, honourScore } = req.body;
+  const { name, honourScore } = req.body;
 
   try {
-    const authority = await Authority.findByIdAndUpdate(
-      id,
-      { honourScore },
-      { new: true }
+    const authority = await Authority.findOneAndUpdate(
+      { name }, // Searching by authority name
+      { honourScore }, // Updating the honourScore
+      { new: true } // Returns the updated document
     );
 
     if (!authority) {
       return res.status(404).send("Authority not found.");
     }
 
-    res.redirect("/authorities-modify");
+    // Send a success message along with redirect
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Update Success</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+              background-color: #2c3e50;
+              color: #ecf0f1;
+            }
+            .success-message {
+              background-color: #27ae60;
+              color: white;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              text-align: center;
+            }
+            a {
+              display: block;
+              margin-top: 20px;
+              text-decoration: none;
+              color: #3498db;
+              font-weight: bold;
+              text-align: center;
+            }
+            a:hover {
+              color: #2980b9;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="success-message">
+            <h2>Success!</h2>
+            <p>The Honour Score for ${name} has been updated successfully.</p>
+            <a href="/authorities-modify">Go back</a>
+          </div>
+        </body>
+      </html>
+    `);
   } catch (error) {
     res.status(500).send("Error updating honour score.");
   }
 });
+
 
 // Logout for government
 app.get("/authorities-modify/logout", (req, res) => {
