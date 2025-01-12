@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,6 +16,7 @@
       background: linear-gradient(to right, #2c3e50, #4ca1af);
       color: #ecf0f1;
     }
+
     .login-container {
       background: rgba(0, 0, 0, 0.7);
       padding: 30px 25px;
@@ -24,12 +26,14 @@
       max-width: 400px;
       animation: fadeIn 1s ease-in-out;
     }
+
     .login-container h2 {
       text-align: center;
       margin-bottom: 20px;
       font-size: 1.8em;
       color: #ffffff;
     }
+
     .login-container form input {
       display: block;
       width: 100%;
@@ -43,10 +47,12 @@
       outline: none;
       transition: background 0.3s ease, box-shadow 0.3s ease;
     }
+
     .login-container form input:focus {
       background: rgba(255, 255, 255, 0.4);
       box-shadow: 0 0 8px rgba(52, 152, 219, 0.8);
     }
+
     .login-container form input[type="submit"] {
       background: #3498db;
       color: #ffffff;
@@ -54,33 +60,58 @@
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s ease;
     }
+
     .login-container form input[type="submit"]:hover {
       background: #2980b9;
       transform: scale(1.05);
     }
+
     .login-container form input::placeholder {
       color: #ffffffa1;
     }
+
     .login-container p {
       text-align: center;
       margin-top: 15px;
       font-size: 0.9em;
       color: #dcdcdc;
     }
+
     .login-container p a {
       color: #3498db;
       text-decoration: none;
       font-weight: bold;
     }
+
     .login-container p a:hover {
       color: #2980b9;
       text-decoration: underline;
     }
+
+    /* Go Back button styling */
+    .go-back-btn {
+      background: #e74c3c;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+      font-size: 1.1em;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .go-back-btn:hover {
+      background: #c0392b;
+      transform: scale(1.05);
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
         transform: translateY(-20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -88,6 +119,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="login-container">
     <h2>Government Login</h2>
@@ -97,6 +129,8 @@
       <input type="submit" value="Login" />
     </form>
     <p>Note for testing give id as 1234 and password as qwerty</p>
+    <button class="go-back-btn" onclick="window.location.href='https://civilizedchaos.netlify.app';">Go Back</button>
   </div>
 </body>
+
 </html>
