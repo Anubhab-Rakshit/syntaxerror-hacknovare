@@ -377,6 +377,9 @@ app.get("/authorities-modify/logout", (req, res) => {
   res.redirect("/authorities-modify/login");
 });
 
+
+
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
