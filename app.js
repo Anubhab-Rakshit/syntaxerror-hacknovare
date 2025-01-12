@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const multer = require("multer");
 const collection = require("./mongodb");
-const session = require("express-session");
+
 
 const app = express();
 const port = 3000;
@@ -295,15 +295,8 @@ app.get("/graphical-analysis", async (req, res) => {
 });
 
 
-const ensureLoggedIn = (req, res, next) => {
-  if (req.session.isLoggedIn) {
-    next();
-  } else {
-    res.redirect("/authorities-modify/login");
-  }
-};
 
-// Routes
+
 
 // Public: View all authorities
 app.get("/authorities", async (req, res) => {
@@ -321,7 +314,7 @@ app.get("/authorities-modify/login", (req, res) => {
 });
 
 // Handle government login
-app.post("/authorities-modify/login", (req, res) => {
+app.post("/authorities-modify/login", async(req, res) => {
   const { id, password } = req.body;
   console.log("Received data:", req.body);
 
@@ -330,7 +323,7 @@ app.post("/authorities-modify/login", (req, res) => {
   const governmentPassword = "qwerty";
 
   if (id === governmentId && password === governmentPassword) {
-    req.session.isLoggedIn = true;
+   
     res.redirect("/authorities-modify");
   } else {
     res.sendFile(path.join(__dirname, "views", "login.html")); // Reload login page on failure
@@ -338,12 +331,12 @@ app.post("/authorities-modify/login", (req, res) => {
 });
 
 // Modify authorities (protected)
-app.get("/authorities-modify", ensureLoggedIn, (req, res) => {
+app.get("/authorities-modify", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "modify.html")); // Modify authorities page
 });
 
 // Add new authority (protected)
-app.post("/authorities-modify/add", ensureLoggedIn, async (req, res) => {
+app.post("/authorities-modify/add", async (req, res) => {
   const { name, email, honourScore } = req.body;
 
   try {
