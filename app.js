@@ -419,7 +419,7 @@ app.get("/view-authorities", async (req, res) => {
               </tbody>
             </table>
             <div class="text-center mt-6">
-              <a href="/" class="text-blue-500 underline hover:text-blue-300">Back to Home</a>
+              <a href="https://civilizedchaos.netlify.app" class="text-blue-500 underline hover:text-blue-300">Back to Home</a>
             </div>
           </div>
         </body>
