@@ -5,7 +5,7 @@ const collection = require("./mongodb");
 
 const app = express();
 const port = 3000;
-
+const Authority = require("./models/authority");
 // Static files path
 const staticPath = path.join(__dirname, "public");
 
@@ -291,6 +291,93 @@ app.get("/graphical-analysis", async (req, res) => {
   } catch (error) {
     res.status(500).send("Error generating graphical analysis.");
   }
+});
+
+
+const ensureLoggedIn = (req, res, next) => {
+  if (req.session.isLoggedIn) {
+    next();
+  } else {
+    res.redirect("/authorities-modify/login");
+  }
+};
+
+// Routes
+
+// Public: View all authorities
+app.get("/authorities", async (req, res) => {
+  try {
+    const authorities = await Authority.find();
+    res.status(200).json(authorities);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching authorities." });
+  }
+});
+
+// Government login page
+app.get("/authorities-modify/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "login.html")); // Login page
+});
+
+// Handle government login
+app.post("/authorities-modify/login", (req, res) => {
+  const { id, password } = req.body;
+
+  // Hardcoded credentials
+  const governmentId = "1234";
+  const governmentPassword = "qwerty";
+
+  if (id === governmentId && password === governmentPassword) {
+    req.session.isLoggedIn = true;
+    res.redirect("/authorities-modify");
+  } else {
+    res.sendFile(path.join(__dirname, "views", "login.html")); // Reload login page on failure
+  }
+});
+
+// Modify authorities (protected)
+app.get("/authorities-modify", ensureLoggedIn, (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "modify.html")); // Modify authorities page
+});
+
+// Add new authority (protected)
+app.post("/authorities-modify/add", ensureLoggedIn, async (req, res) => {
+  const { name, email, honourScore } = req.body;
+
+  try {
+    const newAuthority = new Authority({ name, email, honourScore });
+    await newAuthority.save();
+    res.redirect("/authorities-modify");
+  } catch (error) {
+    res.status(500).send("Error adding authority.");
+  }
+});
+
+// Update honour score (protected)
+app.post("/authorities-modify/update", ensureLoggedIn, async (req, res) => {
+  const { id, honourScore } = req.body;
+
+  try {
+    const authority = await Authority.findByIdAndUpdate(
+      id,
+      { honourScore },
+      { new: true }
+    );
+
+    if (!authority) {
+      return res.status(404).send("Authority not found.");
+    }
+
+    res.redirect("/authorities-modify");
+  } catch (error) {
+    res.status(500).send("Error updating honour score.");
+  }
+});
+
+// Logout for government
+app.get("/authorities-modify/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("/authorities-modify/login");
 });
 
 // Start the server
