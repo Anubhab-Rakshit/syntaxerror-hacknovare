@@ -197,8 +197,8 @@ app.get("/graphical-analysis", async (req, res) => {
               </div>
             </div>
 
-            <a href="/view-reports" class="block mt-8 mx-auto text-center text-lg font-semibold bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-all">
-              Back to Reported Issues
+            <a href="https://civilizedchaos.netlify.app" class="block mt-8 mx-auto text-center text-lg font-semibold bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-all">
+              Back to Home
             </a>
           </div>
 
