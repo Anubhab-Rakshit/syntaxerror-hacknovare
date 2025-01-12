@@ -101,7 +101,7 @@ app.get("/view-reports", async (req, res) => {
                 })
                 .join("")}
             </div>
-            <a href="index.html" class="btn">Back to Home</a>
+            <a href="https://civilizedchaos.netlify.app/index.html" class="btn">Back to Home</a>
           </div>
 
           <!-- Modal -->
