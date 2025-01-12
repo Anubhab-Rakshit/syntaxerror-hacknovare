@@ -399,7 +399,7 @@ app.post("/authorities-modify/update", async (req, res) => {
       { honourScore: honourScore }, // Updating the honourScore
       { new: true } // Returns the updated document
     );
-
+   console.log("Found authority:", authority);
     if (!authority) {
       return res.status(404).send("Authority not found.");
     }
