@@ -395,8 +395,8 @@ app.post("/authorities-modify/update", async (req, res) => {
 
   try {
     const authority = await Authority.findOneAndUpdate(
-      { name }, // Searching by authority name
-      { honourScore }, // Updating the honourScore
+      { name: name }, // Searching by authority name
+      { honourScore: honourScore }, // Updating the honourScore
       { new: true } // Returns the updated document
     );
 
