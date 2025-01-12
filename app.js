@@ -322,6 +322,7 @@ app.get("/authorities-modify/login", (req, res) => {
 // Handle government login
 app.post("/authorities-modify/login", (req, res) => {
   const { id, password } = req.body;
+  console.log("Received data:", req.body);
 
   // Hardcoded credentials
   const governmentId = "1234";
