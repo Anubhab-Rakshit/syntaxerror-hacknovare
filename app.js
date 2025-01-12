@@ -380,7 +380,7 @@ app.get("/view-authorities", async (req, res) => {
   try {
     const authorities = await Authority.find();
 
-    // Render the authorities in a styled HTML page
+    // Render the authorities in a modern blog-like layout
     let html = `
       <!DOCTYPE html>
       <html lang="en">
@@ -393,31 +393,23 @@ app.get("/view-authorities", async (req, res) => {
         <body class="bg-gray-900 text-gray-100">
           <div class="container mx-auto py-10 px-6">
             <h1 class="text-4xl font-bold text-center mb-8">List of Authorities</h1>
-            <table class="table-auto w-full bg-gray-800 rounded-lg shadow-lg">
-              <thead>
-                <tr class="bg-gray-700 text-gray-300">
-                  <th class="px-4 py-2 text-left">#</th>
-                  <th class="px-4 py-2 text-left">Name</th>
-                  <th class="px-4 py-2 text-left">Email</th>
-                  <th class="px-4 py-2 text-left">Honour Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${authorities
-                  .map((authority, index) => {
-                    return `
-                      <tr class="hover:bg-gray-600 transition-all">
-                        <td class="border px-4 py-2">${index + 1}</td>
-                        <td class="border px-4 py-2">${authority.name}</td>
-                        <td class="border px-4 py-2">${authority.email}</td>
-                        <td class="border px-4 py-2">${authority.honourScore}</td>
-                      </tr>
-                    `;
-                  })
-                  .join("")}
-              </tbody>
-            </table>
-            <div class="text-center mt-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              ${authorities
+                .map((authority) => {
+                  return `
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all">
+                      <h3 class="text-xl font-semibold text-blue-400 mb-2">${authority.name}</h3>
+                      <p class="text-gray-300 mb-2">${authority.email}</p>
+                      <div class="flex items-center justify-between">
+                        <span class="text-gray-500">Honour Score:</span>
+                        <span class="text-yellow-400 font-semibold">${authority.honourScore}</span>
+                      </div>
+                    </div>
+                  `;
+                })
+                .join("")}
+            </div>
+            <div class="text-center mt-8">
               <a href="https://civilizedchaos.netlify.app" class="text-blue-500 underline hover:text-blue-300">Back to Home</a>
             </div>
           </div>
@@ -430,6 +422,7 @@ app.get("/view-authorities", async (req, res) => {
     res.status(500).send("Error fetching authorities.");
   }
 });
+
 
 
 // Start the server
